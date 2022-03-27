@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!-- 组件扫描，排除controller -->
+    <context:component-scan
+            base-package="com.emp">
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--引入外部redis配置文件-->
+    <context:property-placeholder
+            location="classpath:redis/redis.properties"/>
+
+    <!--配置redis连接池 -->
+    <bean class="redis.clients.jedis.JedisPool" id="jedisPool">
+        <constructor-arg name="host" value="${redis.ip}"/>
+        <constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
+        <constructor-arg name="port" value="${redis.port}"/>
+        <constructor-arg name="timeout" value="${redis.timeout}"/>
+        <constructor-arg name="password" value="${redis.password}"/>
+    </bean>
+    <!--redis连接池配置-->
+    <bean class="redis.clients.jedis.JedisPoolConfig" id="jedisPoolConfig">
+        <property name="maxIdle" value="${pool.maxIdle}"/>
+        <property name="maxTotal" value="${pool.maxTotal}"/>
+        <property name="maxWaitMillis" value="${pool.maxWaitMillis}"/>
+    </bean>
+
+
+</beans>
